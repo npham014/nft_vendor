@@ -50,7 +50,7 @@ contract('StickMan', (accounts) => {
     })//end describe minting
 
     describe('nft index', async () => {
-        it('returns all stickmans', async () => {
+        it('mints an additional 3 stickmans and returns all stickmans', async () => {
             await contract.mint(1111);
             await contract.mint(2222);
             await contract.mint(3333);
