@@ -24,8 +24,9 @@ contract StickMan is ERC721, ERC721Enumerable {
         return uint256(StickMans.length);
     }
 
-    function mint(uint _dna) public { //gonna let whoever wants one have a stickman, this could be restricted only to a minter address though
+    function mint(uint _dna) public payable { //gonna let whoever wants one have a stickman, this could be restricted only to a minter address though
         require(!_stickExists[_dna]);
+        require(msg.value >= 0.001 ether, "Error, not enough eth sent to purchase NFT");
         StickMans.push(_dna);
         uint _id = StickMans.length - 1;
         _mint(msg.sender, _id);

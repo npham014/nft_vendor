@@ -76,7 +76,7 @@ function App() {
 
   const mint = (newMint) => {
     console.log(account);
-    contract.methods.mint(parseInt(newMint)).send({from: account}).once("receipt", (rec) => {
+    contract.methods.mint(parseInt(newMint)).send({from: account, value:2000000000000000}).once("receipt", (rec) => {
       setStickMansDNA(stickMansDNA => [...stickMansDNA, newMint]);
     });
   }
@@ -121,6 +121,7 @@ function App() {
         </div>
       </div>
     );
+    //TODO: create imagelayers for unique nfts to upload to ipfs
 
 }
 
