@@ -29,38 +29,43 @@ function App() {
       setStickMansDNA(stickMansDNA => [...stickMansDNA, stick._hex]);
     }
   }
+
+  //Web 3 Init
+  function reinitWeb3 () {
+    loadWeb3();
+    loadBlockchainData();
+    gatherStickMans();
+  }
+  async function loadWeb3() {
+    if(window.ethereum) {
+      window.web3 = new Web3(window.ethereum);
+      await window.ethereum.enable()
+    }
+    else {
+      window.alert("No ethereum enabled browser detected. This site will not work properly without a program like metamask.")
+    }
+  }
+
+  async function loadBlockchainData() {
+    const web3 = window.web3;
+    const accounts = await web3.eth.getAccounts();
+    setAccount(accounts[0]);
+    const netId = await web3.eth.net.getId();
+    const netData = StickMan.networks[netId];
+    if(netData) {
+      const abi = StickMan.abi;
+      const address = netData.address;
+      const myContract = new web3.eth.Contract(abi,address);
+      setContract(myContract);
+      const curSupply = await myContract.methods.totalSupply().call()
+      setTotalSupply(curSupply);
+    }
+    else {
+      window.alert("Smart contract not deployed on this network: " + netId)
+    }
+
+  }
   useEffect(() => {
-    //Web 3 Init
-    async function loadWeb3() {
-      if(window.ethereum) {
-        window.web3 = new Web3(window.ethereum);
-        await window.ethereum.enable()
-      }
-      else {
-        window.alert("No ethereum enabled browser detected. This site will not work properly without a program like metamask.")
-      }
-    }
-
-    async function loadBlockchainData() {
-      const web3 = window.web3;
-      const accounts = await web3.eth.getAccounts();
-      setAccount(accounts[0]);
-      const netId = await web3.eth.net.getId();
-      const netData = StickMan.networks[netId];
-      if(netData) {
-        const abi = StickMan.abi;
-        const address = netData.address;
-        const myContract = new web3.eth.Contract(abi,address);
-        setContract(myContract);
-        const curSupply = await myContract.methods.totalSupply().call()
-        setTotalSupply(curSupply);
-      }
-      else {
-        window.alert("Smart contract not deployed on this network: " + netId)
-      }
-
-    }
-
     loadWeb3();
     loadBlockchainData();
     gatherStickMans();
@@ -96,7 +101,7 @@ function App() {
 
   return (
       <div className="app">
-        <NavBar account={account}/>
+        <NavBar account={account} reinitWeb3={reinitWeb3}/>
         <div className="container-fluid mt-5">
           <div className="row">
             <main role="main" className="col-lg-12 d-flex text-center">
